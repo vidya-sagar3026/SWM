@@ -57,6 +57,54 @@ async function callingNodeDetailsFetchingApiForGivenTagId(tagId,ip)
 
 
 
+async function callingVehicleInfoApiForGivenTrackerId(gps_tracker_id,ip)
+{
+ 
+  var fetchedArray;
+  var receivedgps_tracker_id = gps_tracker_id;
+  const axios = require('axios');
+  if(true)
+  {
+    const HttpsProxyAgent = require("https-proxy-agent"),
+    axios = require("axios");
+    const httpsAgent = new HttpsProxyAgent({host: "proxyhost", port: "proxyport", auth: "username:password"})
+    axios = axios.create({httpsAgent});
+  }
+  try
+  {
+      var query = 'http://'+ip+':8081/api/swm/si/getVehicleInfo/?gpsTrackerID='+receivedgps_tracker_id;
+      await axios.get(query).then( resp => {
+      console.log(resp.data);
+      fetchedJson = resp.data;
+      console.log("fetched_json_in_apicalling",fetchedJson);
+      
+    });
+  }
+  catch(err)
+  {
+    console.log(err);
+  }
+
+ 
+
+  return fetchedJson;
+
+
+}
+
+
+async function callingAddVehicleGpsLocation(dataToBeUpdated,ip)
+{
+ 
+  var query = 'http://'+ip+':8081/api/swm/si/addVehicleGpsLocation/';
+  const res = await axios.put(query, dataToBeUpdated);
+  console.log("callingUpdatingNodeDetailsUpdateApiRes--------------->",res.data)
+  res.data.form; 
+}
+
+
+
+
 
 async function callingPlayerIdFetchingFromMobileNoApi(mobNo,ip)
 {

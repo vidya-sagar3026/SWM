@@ -140,6 +140,60 @@ amqp.connect('amqp://guest:guest@127.0.0.1', function(error0, connection) {
               
             io.sockets.emit("WCM_WVM_COLLECTION_STATUS_OF_NODE",WCM_WVM_COLLECTION_STATUS_OF_NODE_DATA);
         }
+
+        if(msgId==20)
+        {
+          console.log(SI_WCM_READER_DATA_QUEUE_MESSAGE.msgId);
+          console.log(SI_WCM_READER_DATA_QUEUE_MESSAGE.TagId);
+          console.log(SI_WCM_READER_DATA_QUEUE_MESSAGE.ImeiNo);
+          console.log(SI_WCM_READER_DATA_QUEUE_MESSAGE.Transaction_Date);
+          var tagId = SI_WCM_READER_DATA_QUEUE_MESSAGE.TagId;
+          var fetchedjson = await apicallingmodule.callingNodeDetailsFetchingApiForGivenTagId(tagId,serverIp); 
+          var jsonArray = new Array();
+          var jsonArray = fetchedjson.array;
+          for(i=0;i<jsonArray.length;i++)
+          {
+
+            console.log("fetchedjson--------------------->",fetchedjson);
+            console.log(fetchedjson.nodeType) ;
+            console.log(fetchedjson.nodeId) ;
+            console.log(fetchedjson.wardId) ;
+            console.log(fetchedjson.driverMobNo) ;
+            console.log(fetchedjson.citizenMobNo) ;
+            console.log(fetchedjson.tripId) ;
+            console.log(fetchedjson.driverId);
+            var putBody = {"zoneId":"","wardId":fetchedjson.wardId,"nodeType":fetchedjson.nodeType,"nodeId":fetchedjson.nodeId,"nodeStatus":2,"collectionTime":"","ImeiNo":SI_WCM_READER_DATA_QUEUE_MESSAGE.tagId};
+            var WCM_WVM_UHF_COLLECTION_STATUS_OF_NODE_DATA = {"msgId":SI_WCM_READER_DATA_QUEUE_MESSAGE.msgId,"wardId":fetchedjson.wardId,"nodeType":fetchedjson.nodeType,"nodeId":fetchedjson.nodeId,"nodeStatus":2,"driverId":fetchedjson.driverId,"mobileNo":};
+            try{
+              await apicallingmodule.callingUpdatingNodeDetailsUpdateApi(putBody,serverIp);
+              }
+              catch(e)
+              {
+                console.log('exception in callingUpdatingNodeDetailsUpdateApi api');
+              }
+              io.sockets.emit("WCM_WVM_UHF_COLLECTION_STATUS_OF_NODE",WCM_WVM_COLLECTION_STATUS_OF_NODE_DATA);
+
+          }
+
+          // console.log("fetchedjson--------------------->",fetchedjson);
+          // console.log(fetchedjson.nodeType) ;
+          // console.log(fetchedjson.nodeId) ;
+          // console.log(fetchedjson.wardId) ;
+          // console.log(fetchedjson.driverMobNo) ;
+          // console.log(fetchedjson.citizenMobNo) ;
+          // console.log(fetchedjson.tripId) ;
+          // console.log(fetchedjson.driverId);
+          // var putBody = {"zoneId":"","wardId":fetchedjson.wardId,"nodeType":fetchedjson.nodeType,"nodeId":fetchedjson.nodeId,"nodeStatus":2,"collectionTime":"","ImeiNo":SI_WCM_READER_DATA_QUEUE_MESSAGE.tagId};
+          // var WCM_WVM_COLLECTION_STATUS_OF_NODE_DATA = {"msgId":SI_WCM_READER_DATA_QUEUE_MESSAGE.msgId,"wardId":fetchedjson.wardId,"nodeType":fetchedjson.nodeType,"nodeId":fetchedjson.nodeId,"nodeStatus":2};
+          // try{
+          //   await apicallingmodule.callingUpdatingNodeDetailsUpdateApi(putBody,serverIp);
+          //   }
+          //   catch(e)
+          //   {
+          //     console.log('exception in callingUpdatingNodeDetailsUpdateApi api');
+          //   }
+          //   io.sockets.emit("WCM_WVM_COLLECTION_STATUS_OF_NODE",WCM_WVM_COLLECTION_STATUS_OF_NODE_DATA);
+        }
         if(msgId==16)
         {
           console.log(" [x] Received %s", msg.content.toString());
@@ -360,6 +414,39 @@ socket.on('WVM_WCM_FETCH_CAMERA_DETAILS', function (data) {
   mqsender.sender('WCM', Buffer.from(JSON.stringify(WCM_SI_FETCH_CAMERA_DETAILS)));
   
 });
+
+
+socket.on('SI_WCM_ BLUE_FORCE_TRACKING_DATA', function (data) {
+  
+  console.log(data.msgId);
+  console.log(data.Imei);
+  console.log(data.Speed);
+  console.log(data.Lat);
+  console.log(data.Lng);
+  console.log(data.Odo);
+  console.log(data.Iggnition);
+  console.log(data.Ipower);
+  var gps_tracker_id = data.Imei;
+  var fetchedjson = await apicallingmodule.callingVehicleInfoApiForGivenTrackerId(gps_tracker_id,serverIp); 
+  console.log("fetched_json--------------------->",fetchedjson);
+
+
+
+
+
+
+
+
+
+  
+
+
+ io.sockets.emit('WCM_WVM_ISSUE_REGISTERATION_ALERT',data);
+  
+});
+
+
+
 
 
 
