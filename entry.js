@@ -2,12 +2,20 @@ const apicallingmodule = require('./apicalling')
 var as = require('./RabbitMq/ConnectionFactory')
 var amqp = require('amqplib/callback_api');
 
+
+
 console.log('This is Entry Class')
 var app = require('express')();
 var cors = require('cors');
 var http = require('http').Server(app);
+var fs = require('fs');
+const PropertiesReader = require('properties-reader');
+const prop = PropertiesReader('app.properties');
+getProperty = (pty) => {return prop.get(pty);}
+console.log(getProperty('server.port'))
+console.log(getProperty('server.ip'))
+serverIp = getProperty('server.ip');
 app.use(cors());
-
 var io = require('socket.io')(http,{
 cors: {
       origin:"*"
@@ -102,7 +110,7 @@ amqp.connect('amqp://guest:guest@127.0.0.1', function(error0, connection) {
             console.log(SI_WCM_READER_DATA_QUEUE_MESSAGE.rfidReaderId);
             console.log(SI_WCM_READER_DATA_QUEUE_MESSAGE.tagId);
           var tagId = SI_WCM_READER_DATA_QUEUE_MESSAGE.tagId;
-          var fetchedjson = await apicallingmodule.callingNodeDetailsFetchingApiForGivenTagId(tagId); 
+          var fetchedjson = await apicallingmodule.callingNodeDetailsFetchingApiForGivenTagId(tagId,serverIp); 
           console.log("fetchedjson--------------------->",fetchedjson);
           console.log(fetchedjson.nodeType) ;
           console.log(fetchedjson.nodeId) ;
@@ -118,7 +126,7 @@ amqp.connect('amqp://guest:guest@127.0.0.1', function(error0, connection) {
           var WCM_MOBLE1_COLLECTION_STATUS_OF_NODE_DATA = {"msgId":SI_WCM_READER_DATA_QUEUE_MESSAGE.msgId,"wardId":fetchedjson.wardId,"nodeType":fetchedjson.nodeType,"nodeId":fetchedjson.nodeId,"nodeStatus":"","driverId":fetchedjson.driverId,"mobileNo": fetchedjson.driverMobNo};
           console.log(putBody);
           try{
-          await apicallingmodule.callingUpdatingNodeDetailsUpdateApi(putBody);
+          await apicallingmodule.callingUpdatingNodeDetailsUpdateApi(putBody,serverIp);
           }
           catch(e)
           {
@@ -156,7 +164,7 @@ amqp.connect('amqp://guest:guest@127.0.0.1', function(error0, connection) {
           var putBody = {"smartBinName":SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.smartBinName,"garbageLevel":SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.garbageLevel};
          // var putBody = { "smartBinName":SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.smartBinName, "capacity":200, "batteryLife":4, "solarBased":1, "startBinPointLat":21.11, "startBinPointLong":72.11, "gpsEnabled":1, "contactNo":"9988776655", "zoneId":1, "wardId":1, "muhallaNme":"M1", "address":"ghaziabad", "capacityAlert":0, "alertDateTime":"", "binTemp":0, "nodeStatus":0 , "tripEnabled":0, "tripId":0, "garbageCollectionTimeStamp":"", "qrCode":"sfdf323", "issueStatus":1, "garbageLevel":SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.garbageLevel, "alertTimeStmp":""};
          // var fetchedjson = await apicallingmodule.callingeditSmartBinApi(putBody); 
-         var fetchedjson = await apicallingmodule.callingsetSmartBinGarbageLevelApi(putBody);
+         var fetchedjson = await apicallingmodule.callingsetSmartBinGarbageLevelApi(putBody,serverIp);
 
           var WCM_WVM_SMART_BIN_ALERT_DATA = {"msgId":SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.msgId,"smartBinName":SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.smartBinName,"garbageLevel":SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.garbageLevel};
           var WCM_DRIVER_MOBILE_SMART_BIN_ALERT_DATA = {"msgId":SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.msgId,"smartBinName":SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.smartBinName,"garbageLevel":SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.garbageLevel};
@@ -257,7 +265,7 @@ socket.on('WVM_WCM_ISSUE_STATUS_UPDATE', async function (data) {
   console.log(data.issueStatus);
   console.log(data.mobNo);
   var WCM_MOBILE_ISSUE_STATUS_UPDATE_BODY = {"issueType":data.issueType,"issueId":data.issueId,"issueStatus":data.issueStatus};
-  var fetchedarray = await apicallingmodule.callingPlayerIdFetchingFromMobileNoApi(data.mobNo);  
+  var fetchedarray = await apicallingmodule.callingPlayerIdFetchingFromMobileNoApi(data.mobNo,serverIp);  
   console.log("the fetched array from api is "+ fetchedarray );
   apicallingmodule.callingNotificationSendingApiForIssueStatusUpdate(fetchedarray,WCM_MOBILE_ISSUE_STATUS_UPDATE_BODY);
 
