@@ -1,3 +1,4 @@
+
 function callingDemoApi(){
     const axios = require('axios');
     dummyparametervalue = 123456;
@@ -6,37 +7,41 @@ function callingDemoApi(){
 });
 }
 
-async function callingPlayerIdFetchingApi(value){
+async function callingPlayerIdFetchingApi(value,ip){
 
-  var value1 =  value;
-  var fetchedArray;
+ 
+    var receivedvalue = value;
+    var fetchedArray;
     const axios = require('axios');
-//     axios.get('http:/api/swm/dss/getListOfUserForCommunityPoint/${value}').then(resp => {
-//     console.log(resp.data);
-// });
-await axios.get(`http://localhost:8081/api/swm/dss/getListOfUserForCommunityPoint/${value}`).then(resp => {
+    var query = 'http://'+ip+':8081/api/swm/dss/getListOfUserForCommunityPoint/?communityPointName='+receivedvalue;
+    await axios.get(query).then(resp => {
     console.log(resp.data);
     fetchedArray = resp.data;
 });
-
-//console.log("data inside",fetchedArray);
 return fetchedArray;
 }
 
 
-async function callingNodeDetailsFetchingApiForGivenTagId(tagId)
+async function callingNodeDetailsFetchingApiForGivenTagId(tagId,ip)
 {
-  //var value1 =  value;
   var test = 'GHZBDCB000001';
   var fetchedArray;
+  var receivedtagId = tagId;
   const axios = require('axios');
+  if(true)
+  {
+    const HttpsProxyAgent = require("https-proxy-agent"),
+    axios = require("axios");
+    const httpsAgent = new HttpsProxyAgent({host: "proxyhost", port: "proxyport", auth: "username:password"})
+    axios = axios.create({httpsAgent});
+  }
   try
   {
-    await axios.get(`http://172.22.7.105:8081/api/swm/report/nodeIdForQrCode/?qrCode=${tagId}`).then( resp => {
+      var query = 'http://'+ip+':8081/api/swm/report/nodeIdForQrCode/?qrCode='+receivedtagId;
+      await axios.get(query).then( resp => {
       console.log(resp.data);
       fetchedJson = resp.data;
       console.log("fetched_json_in_apicalling",fetchedJson);
-      
       
     });
   }
@@ -53,10 +58,10 @@ async function callingNodeDetailsFetchingApiForGivenTagId(tagId)
 
 
 
-async function callingPlayerIdFetchingFromMobileNoApi(mobNo)
+async function callingPlayerIdFetchingFromMobileNoApi(mobNo,ip)
 {
 
-  var value1 =  mobNo;
+  var receivedmobNo =  mobNo;
   var fetchedArray;
     const axios = require('axios');
 
@@ -72,26 +77,27 @@ return fetchedArray;
 
 async function callingeditSmartBinApi(dataToBeUpdated)
 {
-const res = await axios.put('http://localhost:8081/api/swm/report/updateNodeStatus/', dataToBeUpdated);
-res.data.form; 
-res.data.headers['application/json;charset=utf-8']; 
+
+  var query = 'http://'+ip+':8081/api/swm/report/updateNodeStatus/';
+  const res = await axios.put(query, dataToBeUpdated);
+  res.data.form; 
 }
 
 
-async function callingsetSmartBinGarbageLevelApi(dataToBeUpdated)
+async function callingsetSmartBinGarbageLevelApi(dataToBeUpdated,ip)
 {
-const res = await axios.put('http://172.22.7.105:8081/api/swm/si/setSmartBinGarbageLevel/', dataToBeUpdated);
+var query = 'http://'+ip+':8081/api/swm/si/setSmartBinGarbageLevel/';
+const res = await axios.put(query,dataToBeUpdated);
 res.data.form; 
-//res.data.headers['application/json;charset=utf-8']; 
 }
 
-async function callingUpdatingNodeDetailsUpdateApi(dataToBeUpdated)
+async function callingUpdatingNodeDetailsUpdateApi(dataToBeUpdated,ip)
 {
   const axios = require('axios');
-const res = await axios.put('http://172.22.7.105:8081/api/swm/report/updateNodeStatus/', dataToBeUpdated);
-console.log("callingUpdatingNodeDetailsUpdateApiRes--------------->",res.data)
-res.data.form; 
-//res.data.headers['application/json;charset=utf-8']; 
+  var query = 'http://'+ip+':8081/api/swm/report/updateNodeStatus/';
+  const res = await axios.put(query, dataToBeUpdated);
+  console.log("callingUpdatingNodeDetailsUpdateApiRes--------------->",res.data)
+  res.data.form; 
 }
 
 async function callingNotificationSendingApi(playerIdArrayarg)
