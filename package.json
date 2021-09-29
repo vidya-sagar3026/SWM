@@ -1,0 +1,27 @@
+{
+  "name": "check",
+  "version": "1.0.0",
+  "description": "demo",
+  "main": "entry.js",
+  "scripts": {
+    "test": "console.log('checking')"
+  },
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "keywords": [
+    "."
+  ],
+  "author": "keshav",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.8.0",
+    "axios": "^0.21.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "properties-reader": "^2.2.0",
+    "socket.io": "^4.2.0",
+    "socket.io-client": "^4.1.3"
+  }
+}
