@@ -7,16 +7,15 @@ function callingDemoApi(){
 });
 }
 
-async function callingPlayerIdFetchingApi(value,ip){
+async function callingGetListOfUserForCommunityPointApi(receivedCommunityPointName,ip){
 
- 
-    var receivedvalue = value;
-    var fetchedArray;
-    const axios = require('axios');
-    var query = 'http://'+ip+':8081/api/swm/dss/getListOfUserForCommunityPoint/?communityPointName='+receivedvalue;
-    await axios.get(query).then(resp => {
-    console.log(resp.data);
-    fetchedArray = resp.data;
+  var receivedvalue = receivedCommunityPointName;
+  var fetchedArray;
+  const axios = require('axios');
+  var query = 'http://'+ip+':8081/api/swm/report/getListOfUserForCommunityPoint/?communityPointName='+receivedvalue;
+  await axios.get(query).then(resp => {
+  console.log(resp.data);
+  fetchedArray = resp.data;
 });
 return fetchedArray;
 }
@@ -422,4 +421,4 @@ async function callingNotificationSendingApiForIssueStatusUpdate(playerIdArrayar
         }
 
 
-module.exports = {callingDemoApi,callingPlayerIdFetchingApi,callingNotificationSendingApi,callingPlayerIdFetchingFromMobileNoApi,callingNotificationSendingApiForIssueStatusUpdate,callingNotificationSendingApiForTripUpdateAlert,callingNodeDetailsFetchingApiForGivenTagId,callingUpdatingNodeDetailsUpdateApi,WCM_MOBLE2_COLLECTION_STATUS_OF_NODE_NOTIFICATION,WCM_MOBLE1_COLLECTION_STATUS_OF_NODE_NOTIFICATION,callingsetSmartBinGarbageLevelApi};
+module.exports = {callingDemoApi,callingNotificationSendingApi,callingPlayerIdFetchingFromMobileNoApi,callingNotificationSendingApiForIssueStatusUpdate,callingNotificationSendingApiForTripUpdateAlert,callingNodeDetailsFetchingApiForGivenTagId,callingUpdatingNodeDetailsUpdateApi,WCM_MOBLE2_COLLECTION_STATUS_OF_NODE_NOTIFICATION,WCM_MOBLE1_COLLECTION_STATUS_OF_NODE_NOTIFICATION,callingsetSmartBinGarbageLevelApi,callingGetListOfUserForCommunityPointApi};
