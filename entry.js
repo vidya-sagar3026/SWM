@@ -150,20 +150,21 @@ amqp.connect('amqp://guest:guest@127.0.0.1', function(error0, connection) {
           var tagId = SI_WCM_READER_DATA_QUEUE_MESSAGE.TagId;
           var fetchedjson = await apicallingmodule.callingNodeDetailsFetchingApiForGivenTagId(tagId,serverIp); 
           var jsonArray = new Array();
-          var jsonArray = fetchedjson.array;
+          var jsonArray = fetchedjson;
           for(i=0;i<jsonArray.length;i++)
           {
 
-            console.log("fetchedjson--------------------->",fetchedjson);
-            console.log(fetchedjson.nodeType) ;
-            console.log(fetchedjson.nodeId) ;
-            console.log(fetchedjson.wardId) ;
-            console.log(fetchedjson.driverMobNo) ;
-            console.log(fetchedjson.citizenMobNo) ;
-            console.log(fetchedjson.tripId) ;
-            console.log(fetchedjson.driverId);
-            var putBody = {"zoneId":"","wardId":fetchedjson.wardId,"nodeType":fetchedjson.nodeType,"nodeId":fetchedjson.nodeId,"nodeStatus":2,"collectionTime":"","ImeiNo":SI_WCM_READER_DATA_QUEUE_MESSAGE.tagId};
-            var WCM_WVM_UHF_COLLECTION_STATUS_OF_NODE_DATA = {"msgId":SI_WCM_READER_DATA_QUEUE_MESSAGE.msgId,"wardId":fetchedjson.wardId,"nodeType":fetchedjson.nodeType,"nodeId":fetchedjson.nodeId,"nodeStatus":2,"driverId":fetchedjson.driverId,"mobileNo":};
+            fetchjsonindividualelement = jsonArray[i];
+            console.log("fetchedjson--------------------->",fetchjsonindividualelement);
+            console.log(fetchjsonindividualelement.nodeType) ;
+            console.log(fetchjsonindividualelement.nodeId) ;
+            console.log(fetchjsonindividualelement.wardId) ;
+            console.log(fetchjsonindividualelement.driverMobNo) ;
+            console.log(fetchjsonindividualelement.citizenMobNo) ;
+            console.log(fetchjsonindividualelement.tripId) ;
+            console.log(fetchjsonindividualelement.driverId);
+            var putBody = {"zoneId":"","wardId":fetchjsonindividualelement.wardId,"nodeType":fetchjsonindividualelement.nodeType,"nodeId":fetchjsonindividualelement.nodeId,"nodeStatus":2,"collectionTime":SI_WCM_READER_DATA_QUEUE_MESSAGE.Transaction_Date,"ImeiNo":SI_WCM_READER_DATA_QUEUE_MESSAGE.tagId};
+            var WCM_WVM_UHF_COLLECTION_STATUS_OF_NODE_DATA = {"msgId":SI_WCM_READER_DATA_QUEUE_MESSAGE.msgId,"wardId":fetchjsonindividualelement.wardId,"nodeType":fetchjsonindividualelement.nodeType,"nodeId":fetchjsonindividualelement.nodeId,"nodeStatus":2,"driverId":fetchjsonindividualelement.driverId,"mobileNo":fetchjsonindividualelementdriverMobNo};
             try{
               await apicallingmodule.callingUpdatingNodeDetailsUpdateApi(putBody,serverIp);
               }
@@ -171,7 +172,7 @@ amqp.connect('amqp://guest:guest@127.0.0.1', function(error0, connection) {
               {
                 console.log('exception in callingUpdatingNodeDetailsUpdateApi api');
               }
-              io.sockets.emit("WCM_WVM_UHF_COLLECTION_STATUS_OF_NODE",WCM_WVM_COLLECTION_STATUS_OF_NODE_DATA);
+              io.sockets.emit("WCM_WVM_UHF_COLLECTION_STATUS_OF_NODE",WCM_WVM_UHF_COLLECTION_STATUS_OF_NODE_DATA);
 
           }
 
