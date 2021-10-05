@@ -40,7 +40,7 @@ class entrySocket {
             }
             var SI_MESSAGES_QUEUE = 'SI';
             var SI_WCM_READER_DATA_QUEUE = 'SI';
-            var IVA_WCM_FACE_DETECTED_ON_BLACK_SPOT_QUEUE = 'IVA';
+            var IVA_MESSAGE_QUEUE = 'IVA';
             var DA_WCM_CALCULATED_AUTO_TRIP_QUEUE = 'DA';
             var SI_WCM_CAMERA_DETAILS_UPDATED_QUEUE = 'SI';
             var SI_WCM_DA_SMART_BIN_ALERT_QUEUE = 'SI';
@@ -129,6 +129,7 @@ class entrySocket {
                 }
                 catch (e) {
                   console.log('exception in callingUpdatingNodeDetailsUpdateApi api');
+                  
                 }
                 //   await apicallingmodule.WCM_MOBLE2_COLLECTION_STATUS_OF_NODE_NOTIFICATION(mobilestobenotified,WCM_MOBLE2_COLLECTION_STATUS_OF_NODE_DATA);
                 //   await apicallingmodule.WCM_MOBLE1_COLLECTION_STATUS_OF_NODE_NOTIFICATION(mobilestobenotified,WCM_MOBLE1_COLLECTION_STATUS_OF_NODE_DATA);
@@ -229,6 +230,44 @@ class entrySocket {
 
               }
 
+
+              if(msgId == 21)
+              {
+                console.log(SI_MESSAGE.msgId);
+                console.log(SI_MESSAGE.Imei);
+                console.log(SI_MESSAGE.Speed);
+                console.log(SI_MESSAGE.Lat);
+                console.log(SI_MESSAGE.Lng);
+                console.log(SI_MESSAGE.Odo);
+                console.log(SI_MESSAGE.msgId);
+                console.log(SI_MESSAGE.Iggnition);
+                console.log(SI_MESSAGE.Ipower);
+                console.log(SI_MESSAGE.dateTime);
+                var gps_tracker_id = SI_MESSAGE.Imei;
+                var fetchedjson;
+                try
+                {
+                 fetchedjson = await apicallingmodule.callingVehicleInfoApiForGivenTrackerId(gps_tracker_id,serverIp);
+                 console.log(fetchedjson.vehicleNo);
+                 console.log(fetchedjson.wardId);
+
+
+                }
+
+                catch(e)
+                {
+                  console.log("error in calling api VehicleInfoApiForGivenTrackerId");
+                  console.log(e);
+                }
+                var putbodyforpostfirstreceiveddata = {"vehicleNo":fetchedjson.vehicleNo, "Speed":SI_MESSAGE.Speed, "Lat":SI_MESSAGE.Lat, "Lng":SI_MESSAGE.Lng,"Odo":SI_MESSAGE.Odo,"Iggnition":SI_MESSAGE.Iggnition, "Ipower":SI_MESSAGE.Ipower,"dateTime":SI_MESSAGE.dateTime};
+                if(SI_MESSAGE.dateTime=="")
+                {
+                  var fetchedJsonForLocationPost = await apicallingmodule.callingapiAddGPSData(gps_tracker_id,serverIp);
+                  console.log(fetchedJsonForLocationPost);
+                }
+
+              }
+
               // });
 
 
@@ -238,6 +277,9 @@ class entrySocket {
             }, {
               noAck: true
             });
+
+
+
 
 
 
@@ -263,6 +305,38 @@ class entrySocket {
 
 
 
+
+            }, {
+              noAck: true
+            });
+
+
+            channel.consume(IVA_MESSAGE_QUEUE, async function (msg) {
+              console.log(" [x] Received %s", msg.content.toString());
+              var IVA_MESSAGE  = JSON.parse(msg.content.toString());
+              var msgId = IVA_MESSAGE.msgId;
+              if(msgId==12)
+              {
+              console.log(IVA_MESSAGE.msgId);
+              console.log(IVA_MESSAGE.cameraName);
+              console.log(IVA_MESSAGE.zoneId);
+              console.log(IVA_MESSAGE.wardId);
+              console.log(IVA_MESSAGE.muhallaName);
+              console.log(IVA_MESSAGE.wasteClassification);
+              console.log(IVA_MESSAGE.personFlag);
+              var WCM_WVM_WASTE_CLASSIFICATION_ON_BLACK_SPOT_DATA = { "msgId": IVA_MESSAGE.msgId, "cameraName": IVA_MESSAGE.cameraName, "zoneId": IVA_MESSAGE.zoneId,"wardId":IVA_MESSAGE.wardId,"muhallaName":IVA_MESSAGE.muhallaName,"wasteClassification":IVA_MESSAGE.wasteClassification,"personFlag": IVA_MESSAGE.personFlag};
+              io.sockets.emit("WCM_WVM_WASTE_CLASSIFICATION_ON_BLACK_SPOT", WCM_WVM_WASTE_CLASSIFICATION_ON_BLACK_SPOT_DATA);
+              }
+              if(msgId==13)
+              {
+                console.log(IVA_MESSAGE.msgId);
+                console.log(IVA_MESSAGE.cameraName);
+                console.log(IVA_MESSAGE.imageName);
+                console.log(IVA_MESSAGE.imageURL);
+                var WCM_WVM_FACE_DETECTED_ON_BLACKSPOT_DATA = { "msgId": IVA_MESSAGE.msgId, "cameraName": IVA_MESSAGE.cameraName, "imageName": IVA_MESSAGE.imageName,"imageURL":IVA_MESSAGE.imageURL};
+              io.sockets.emit("WCM_WVM_FACE_DETECTED_ON_BLACKSPOT",WCM_WVM_FACE_DETECTED_ON_BLACKSPOT_DATA);
+
+              }
 
             }, {
               noAck: true
