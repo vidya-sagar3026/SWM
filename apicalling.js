@@ -104,7 +104,17 @@ async function callingapiAddGPSData(dataToBeUpdated,ip)
 {
  
   var query = 'http://'+ip+':8081/api/swm/si/addGPSData/';
-  const res = await axios.post(query, dataToBeUpdated);
+  const res = await axios.post(query,dataToBeUpdated);
+  console.log("callingUpdatingNodeDetailsUpdateApiRes--------------->",res.data)
+  res.data.form; 
+}
+
+
+async function callingapiUpdateVehiclePerformanceData(dataToBeUpdated,vehicleNo,ip)
+{
+ 
+  var query = 'http://'+ip+':8081/api/swm/si/updateVehiclePerformanceData/?vehicleNo='+vehicleNo;
+  const res = await axios.post(query,dataToBeUpdated);
   console.log("callingUpdatingNodeDetailsUpdateApiRes--------------->",res.data)
   res.data.form; 
 }
@@ -429,4 +439,4 @@ async function callingNotificationSendingApiForIssueStatusUpdate(playerIdArrayar
         }
 
 
-module.exports = {callingDemoApi,callingNotificationSendingApi,callingPlayerIdFetchingFromMobileNoApi,callingNotificationSendingApiForIssueStatusUpdate,callingNotificationSendingApiForTripUpdateAlert,callingNodeDetailsFetchingApiForGivenTagId,callingUpdatingNodeDetailsUpdateApi,WCM_MOBLE2_COLLECTION_STATUS_OF_NODE_NOTIFICATION,WCM_MOBLE1_COLLECTION_STATUS_OF_NODE_NOTIFICATION,callingsetSmartBinGarbageLevelApi,callingGetListOfUserForCommunityPointApi,callingVehicleInfoApiForGivenTrackerId,callingapiAddGPSData};
+module.exports = {callingDemoApi,callingNotificationSendingApi,callingPlayerIdFetchingFromMobileNoApi,callingNotificationSendingApiForIssueStatusUpdate,callingNotificationSendingApiForTripUpdateAlert,callingNodeDetailsFetchingApiForGivenTagId,callingUpdatingNodeDetailsUpdateApi,WCM_MOBLE2_COLLECTION_STATUS_OF_NODE_NOTIFICATION,WCM_MOBLE1_COLLECTION_STATUS_OF_NODE_NOTIFICATION,callingsetSmartBinGarbageLevelApi,callingGetListOfUserForCommunityPointApi,callingVehicleInfoApiForGivenTrackerId,callingapiAddGPSData,callingapiUpdateVehiclePerformanceData};

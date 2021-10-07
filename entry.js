@@ -10,6 +10,7 @@ var cors = require('cors');
 var http = require('http').Server(app);
 var fs = require('fs');
 const PropertiesReader = require('properties-reader');
+const apicalling = require('./apicalling');
 const prop = PropertiesReader('app.properties');
 getProperty = (pty) => { return prop.get(pty); }
 console.log(getProperty('server.port'))
@@ -195,7 +196,7 @@ class entrySocket {
                 var WCM_WVM_CAMERA_DETAILS_UPDATED_DATA = { "msgId": SI_WCM_CAMERA_DETAILS_UPDATED_QUEUE_MESSAGE.msgId, "result": SI_WCM_CAMERA_DETAILS_UPDATED_QUEUE_MESSAGE.result };
 
 
-                io.sockets.emit("WCM_WVM_CAMERA_ DETAILS_UPDATED", WCM_WVM_CAMERA_DETAILS_UPDATED_DATA);
+                io.sockets.emit("WCM_WVM_CAMERA_DETAILS_UPDATED", WCM_WVM_CAMERA_DETAILS_UPDATED_DATA);
               }
               if (msgId == 17) {
                 console.log(" [x] Received %s", msg.content.toString());
@@ -250,8 +251,6 @@ class entrySocket {
                  fetchedjson = await apicallingmodule.callingVehicleInfoApiForGivenTrackerId(gps_tracker_id,serverIp);
                  console.log(fetchedjson.vehicleNo);
                  console.log(fetchedjson.wardId);
-
-
                 }
 
                 catch(e)
@@ -262,9 +261,26 @@ class entrySocket {
                 var putbodyforpostfirstreceiveddata = {"vehicleNo":fetchedjson.vehicleNo, "Speed":SI_MESSAGE.Speed, "Lat":SI_MESSAGE.Lat, "Lng":SI_MESSAGE.Lng,"Odo":SI_MESSAGE.Odo,"Iggnition":SI_MESSAGE.Iggnition, "Ipower":SI_MESSAGE.Ipower,"dateTime":SI_MESSAGE.dateTime};
                 if(SI_MESSAGE.dateTime=="")
                 {
-                  var fetchedJsonForLocationPost = await apicallingmodule.callingapiAddGPSData(gps_tracker_id,serverIp);
+                  var fetchedJsonForLocationPost = await apicallingmodule.callingapiAddGPSData(putbodyforpostfirstreceiveddata,serverIp);
+
+                  /api/swm/si/updateVehiclePerformanceData/?vehicleNo={value}
+
+                  var fetchedJsonForUpdateVehiclePerformanceData = await apicalling.callingapiUpdateVehiclePerformanceData();
+
                   console.log(fetchedJsonForLocationPost);
                 }
+                socket.on('WVM_WCM_GPS_DATA_REQ', function (data) {
+
+                  console.log(data.VehicleNo);
+                  console.log(data.loginUser);
+                  console.log(data.ReqStatus);
+                  WCM_WVM_GPS_DATA_RESP_MESSAGE = {"VehicleNo":,"Speed":,"Lat":,"Lng":,"Odo":,"Iggnition":}
+                  var event = "MESSAGE_FOR_ID_" + data.tripId;
+                  io.sockets.emit(event, data);
+                  console.log(event);
+        
+        
+                });
 
               }
 
