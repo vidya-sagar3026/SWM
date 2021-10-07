@@ -23,6 +23,7 @@ var io = require('socket.io')(http, {
   }
 
 });
+var VehcilenoVsReceivedSIdata = [];
 
 class entrySocket {
     constructor() {
@@ -246,41 +247,71 @@ class entrySocket {
                 console.log(SI_MESSAGE.dateTime);
                 var gps_tracker_id = SI_MESSAGE.Imei;
                 var fetchedjson;
+               
+                
                 try
                 {
                  fetchedjson = await apicallingmodule.callingVehicleInfoApiForGivenTrackerId(gps_tracker_id,serverIp);
                  console.log(fetchedjson.vehicleNo);
                  console.log(fetchedjson.wardId);
+                 VehcilenoVsReceivedSIdata[fetchedjson.vehicleNo] = SI_MESSAGE;
                 }
 
                 catch(e)
                 {
                   console.log("error in calling api VehicleInfoApiForGivenTrackerId");
                   console.log(e);
+                  VehcilenoVsReceivedSIdata[fetchedjson.vehicleNo] = SI_MESSAGE;//vehicle to be hardcoded
                 }
                 var putbodyforpostfirstreceiveddata = {"vehicleNo":fetchedjson.vehicleNo, "Speed":SI_MESSAGE.Speed, "Lat":SI_MESSAGE.Lat, "Lng":SI_MESSAGE.Lng,"Odo":SI_MESSAGE.Odo,"Iggnition":SI_MESSAGE.Iggnition, "Ipower":SI_MESSAGE.Ipower,"dateTime":SI_MESSAGE.dateTime};
-                if(SI_MESSAGE.dateTime=="")
+               // var putbodyforUpdateVehiclePerformance = { "vehicleNo" :"XYZ","totalRunningKms":17,"idleHours":1,"standByHours":0,"dateTimeStamp":"" }
+  
+                if(false)//SI_MESSAGE.dateTime==""
                 {
+                  
                   var fetchedJsonForLocationPost = await apicallingmodule.callingapiAddGPSData(putbodyforpostfirstreceiveddata,serverIp);
-
-                  /api/swm/si/updateVehiclePerformanceData/?vehicleNo={value}
-
-                  var fetchedJsonForUpdateVehiclePerformanceData = await apicalling.callingapiUpdateVehiclePerformanceData();
-
+                 // var fetchedJsonForUpdateVehiclePerformanceData = await apicalling.callingapiUpdateVehiclePerformanceData(putbodyforUpdateVehiclePerformance,fetchedjson.vehicleNo,serverIp);
                   console.log(fetchedJsonForLocationPost);
+                  console.log(fetchedJsonForUpdateVehiclePerformanceData);
+                  
                 }
-                socket.on('WVM_WCM_GPS_DATA_REQ', function (data) {
+                if(true)//conditiom for when vehicle needs to be updated
+                {
+                  try{
+                  var fetchedJsonForLocationPost = await apicallingmodule.callingapiAddGPSData(putbodyforpostfirstreceiveddata,serverIp);
+                  console.log(fetchedJsonForLocationPost);
+                  }
+                  catch(e)
+                  {
+                       console.log("error in AddGPSData api");
+                  }
+                  try
+                  {
+                //  var fetchedJsonForUpdateVehiclePerformanceData = await apicalling.callingapiUpdateVehiclePerformanceData(putbodyforUpdateVehiclePerformance,fetchedjson.vehicleNo,serverIp);
+                  //console.log(fetchedJsonForUpdateVehiclePerformanceData);
+                  }
+                  catch(e)
+                  {
+                    console.log("error in UpdateVehiclePerformanceData api");
+                  }
+  
+                }
+                // socket.on('WVM_WCM_GPS_DATA_REQ', function (data) {
 
-                  console.log(data.VehicleNo);
-                  console.log(data.loginUser);
-                  console.log(data.ReqStatus);
-                  WCM_WVM_GPS_DATA_RESP_MESSAGE = {"VehicleNo":,"Speed":,"Lat":,"Lng":,"Odo":,"Iggnition":}
-                  var event = "MESSAGE_FOR_ID_" + data.tripId;
-                  io.sockets.emit(event, data);
-                  console.log(event);
+                //   console.log(data.VehicleNo);
+                //   console.log(data.loginUser);
+                //   console.log(data.ReqStatus);
+                //   if(VehcilenoVsReceivedSIdata[fetchedjson.vehicleNo]!=null)
+                //   {
+                //     var receivedSIdataAgainstVechileNo = VehcilenoVsReceivedSIdata[fetchedjson.vehicleNo]; 
+                //     var WCM_WVM_GPS_DATA_RESP_MESSAGE = {"VehicleNo":data.VehicleNo,"Speed":receivedSIdataAgainstVechileNo.Speed,"Lat":receivedSIdataAgainstVechileNo.Lat,"Lng":receivedSIdataAgainstVechileNo.Lng,"Odo":receivedSIdataAgainstVechileNo.Odo,"Iggnition":receivedSIdataAgainstVechileNo.Iggnition};
+                //     var event = "WCM_WVM_GPS_DATA_RESP_" + data.loginUser;
+                //     io.sockets.emit(event, WCM_WVM_GPS_DATA_RESP_MESSAGE );
+                //   }
+                  
         
         
-                });
+                // });
 
               }
 
@@ -396,6 +427,30 @@ class entrySocket {
           //console.log("the fetched array from api is "+ fetchedarray );
           //apicallingmodule.callingNotificationSendingApi(fetchedarray);
           // io.sockets.emit('WCM_MOBILE2_SEND_VEHICLE_ARRIVAL_NOTIFY',data);
+
+        });
+
+
+
+        socket.on('WVM_WCM_GPS_DATA_REQ', function (data) {
+
+          console.log(data.VehicleNo);
+          console.log(data.loginUser);
+          console.log(data.ReqStatus);
+          var event = "WCM_WVM_GPS_DATA_RESP_" + data.loginUser;
+          if(VehcilenoVsReceivedSIdata[data.VehicleNo]!=undefined)
+          {
+            var receivedSIdataAgainstVechileNo = VehcilenoVsReceivedSIdata[data.VehicleNo]; 
+            var WCM_WVM_GPS_DATA_RESP_MESSAGE = {"VehicleNo":data.VehicleNo,"Speed":receivedSIdataAgainstVechileNo.Speed,"Lat":receivedSIdataAgainstVechileNo.Lat,"Lng":receivedSIdataAgainstVechileNo.Lng,"Odo":receivedSIdataAgainstVechileNo.Odo,"Iggnition":receivedSIdataAgainstVechileNo.Iggnition};
+            io.sockets.emit(event, WCM_WVM_GPS_DATA_RESP_MESSAGE );
+          }
+          else
+          {
+              console.log("given vehicle numver has not been received");
+              io.sockets.emit(event,"given vehicle does not exist");
+          }
+          
+
 
         });
 
