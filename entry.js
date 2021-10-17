@@ -296,22 +296,7 @@ class entrySocket {
                   }
   
                 }
-                // socket.on('WVM_WCM_GPS_DATA_REQ', function (data) {
-
-                //   console.log(data.VehicleNo);
-                //   console.log(data.loginUser);
-                //   console.log(data.ReqStatus);
-                //   if(VehcilenoVsReceivedSIdata[fetchedjson.vehicleNo]!=null)
-                //   {
-                //     var receivedSIdataAgainstVechileNo = VehcilenoVsReceivedSIdata[fetchedjson.vehicleNo]; 
-                //     var WCM_WVM_GPS_DATA_RESP_MESSAGE = {"VehicleNo":data.VehicleNo,"Speed":receivedSIdataAgainstVechileNo.Speed,"Lat":receivedSIdataAgainstVechileNo.Lat,"Lng":receivedSIdataAgainstVechileNo.Lng,"Odo":receivedSIdataAgainstVechileNo.Odo,"Iggnition":receivedSIdataAgainstVechileNo.Iggnition};
-                //     var event = "WCM_WVM_GPS_DATA_RESP_" + data.loginUser;
-                //     io.sockets.emit(event, WCM_WVM_GPS_DATA_RESP_MESSAGE );
-                //   }
-                  
-        
-        
-                // });
+               
 
               }
 
