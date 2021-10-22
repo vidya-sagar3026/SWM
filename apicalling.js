@@ -54,6 +54,74 @@ async function callingNodeDetailsFetchingApiForGivenTagId(tagId,ip)
 }
 
 
+async function callingNodeDetailsFetchingApiForGivenQrCodeForSmartBin(smartBinName,ip)
+{
+  var test = 'GHZBDCB000001';
+  var fetchedArray;
+  var receivedtagId = tagId;
+  const axios = require('axios');
+  if(true)
+  {
+    const HttpsProxyAgent = require("https-proxy-agent"),
+    axios = require("axios");
+    const httpsAgent = new HttpsProxyAgent({host: "proxyhost", port: "proxyport", auth: "username:password"})
+    axios = axios.create({httpsAgent});
+  }
+  try
+  {
+      var query = 'http://'+ip+':8081/api/swm/report/nodeIdForQrCode/?qrCode='+smartBinName;
+      await axios.get(query).then( resp => {
+      console.log(resp.data);
+      fetchedJson = resp.data;
+      console.log("fetched_json_in_apicalling",fetchedJson);
+      
+    });
+  }
+  catch(err)
+  {
+    console.log(err);
+  }
+  return fetchedJson;
+
+
+}
+
+
+
+async function callingNodeDetailsFetchingApiForSmartBinName(smartBinName,ip)
+{
+  var test = 'GHZBDCB000001';
+  var fetchedArray;
+  var receivedtagId = tagId;
+  const axios = require('axios');
+  if(true)
+  {
+    const HttpsProxyAgent = require("https-proxy-agent"),
+    axios = require("axios");
+    const httpsAgent = new HttpsProxyAgent({host: "proxyhost", port: "proxyport", auth: "username:password"})
+    axios = axios.create({httpsAgent});
+  }
+  try
+  {
+      var query = 'http://'+ip+':8081/api/swm/smartBin/getsmartBinDetail/?smartBinName='+smartBinName;
+      await axios.get(query).then( resp => {
+      console.log(resp.data);
+      fetchedJson = resp.data;
+      console.log("fetched_json_in_apicalling",fetchedJson);
+      
+    });
+  }
+  catch(err)
+  {
+    console.log(err);
+  }
+  return fetchedJson;
+
+
+}
+
+
+
 
 
 async function callingVehicleInfoApiForGivenTrackerId(gps_tracker_id,ip)
@@ -129,8 +197,9 @@ async function callingPlayerIdFetchingFromMobileNoApi(mobNo,ip)
   var receivedmobNo =  mobNo;
   var fetchedArray;
     const axios = require('axios');
-
-await axios.get(`http://localhost:8081/api/swm/report/getPlayerId/${mobNo}`).then(resp => {
+var query = 'http://'+ip+':8081/api/swm/report/getPlayerId/?mobNo='+mobNo;
+//await axios.get(`http://localhost:8081/api/swm/report/getPlayerId/${mobNo}`).then(resp => {
+  await axios.get(query).then(resp => {
     console.log(resp.data);
     fetchedArray = resp.data;
 });
@@ -439,4 +508,4 @@ async function callingNotificationSendingApiForIssueStatusUpdate(playerIdArrayar
         }
 
 
-module.exports = {callingDemoApi,callingNotificationSendingApi,callingPlayerIdFetchingFromMobileNoApi,callingNotificationSendingApiForIssueStatusUpdate,callingNotificationSendingApiForTripUpdateAlert,callingNodeDetailsFetchingApiForGivenTagId,callingUpdatingNodeDetailsUpdateApi,WCM_MOBLE2_COLLECTION_STATUS_OF_NODE_NOTIFICATION,WCM_MOBLE1_COLLECTION_STATUS_OF_NODE_NOTIFICATION,callingsetSmartBinGarbageLevelApi,callingGetListOfUserForCommunityPointApi,callingVehicleInfoApiForGivenTrackerId,callingapiAddGPSData,callingapiUpdateVehiclePerformanceData};
+module.exports = {callingDemoApi,callingNotificationSendingApi,callingPlayerIdFetchingFromMobileNoApi,callingNotificationSendingApiForIssueStatusUpdate,callingNotificationSendingApiForTripUpdateAlert,callingNodeDetailsFetchingApiForGivenTagId,callingUpdatingNodeDetailsUpdateApi,WCM_MOBLE2_COLLECTION_STATUS_OF_NODE_NOTIFICATION,WCM_MOBLE1_COLLECTION_STATUS_OF_NODE_NOTIFICATION,callingsetSmartBinGarbageLevelApi,callingGetListOfUserForCommunityPointApi,callingVehicleInfoApiForGivenTrackerId,callingapiAddGPSData,callingapiUpdateVehiclePerformanceData,callingNodeDetailsFetchingApiForGivenQrCodeForSmartBin,callingNodeDetailsFetchingApiForSmartBinName};

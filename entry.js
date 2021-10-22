@@ -201,18 +201,48 @@ class entrySocket {
               }
               if (msgId == 17) {
                 console.log(" [x] Received %s", msg.content.toString());
+                var nodeId ="";
+                var receivedCapacity = 0;
+                var levelPercentage =0;
                 var SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE = JSON.parse(msg.content.toString());
                 console.log(SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.msgId);
                 console.log(SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.smartBinName);
                 console.log(SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.garbageLevel);
-
+                var receivedGarbageLevel = SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.garbageLevel;
+                var receivedQrCode = SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.smartBinName;
                 var putBody = { "smartBinName": SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.smartBinName, "garbageLevel": SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.garbageLevel };
                 // var putBody = { "smartBinName":SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.smartBinName, "capacity":200, "batteryLife":4, "solarBased":1, "startBinPointLat":21.11, "startBinPointLong":72.11, "gpsEnabled":1, "contactNo":"9988776655", "zoneId":1, "wardId":1, "muhallaNme":"M1", "address":"ghaziabad", "capacityAlert":0, "alertDateTime":"", "binTemp":0, "nodeStatus":0 , "tripEnabled":0, "tripId":0, "garbageCollectionTimeStamp":"", "qrCode":"sfdf323", "issueStatus":1, "garbageLevel":SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.garbageLevel, "alertTimeStmp":""};
                 // var fetchedjson = await apicallingmodule.callingeditSmartBinApi(putBody); 
-                var fetchedjson = await apicallingmodule.callingsetSmartBinGarbageLevelApi(putBody, serverIp);
+                try{
+                var fetchedNodeDetails = await apicallingmodule.callingNodeDetailsFetchingApiForGivenQrCodeForSmartBin(receivedQrCode,serverIp);
+                 nodeId = fetchedNodeDetails.nodeId;
 
-                var WCM_WVM_SMART_BIN_ALERT_DATA = { "msgId": SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.msgId, "smartBinName": SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.smartBinName, "garbageLevel": SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.garbageLevel };
-                var WCM_DRIVER_MOBILE_SMART_BIN_ALERT_DATA = { "msgId": SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.msgId, "smartBinName": SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.smartBinName, "garbageLevel": SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.garbageLevel };
+
+                }
+                catch(e)
+                {
+                  console.log("error in fetching node details for smart bin");
+                }
+                if(nodeId!=undefined && nodeId!="")
+                {
+                  try
+                  {
+                  var fetchedDetailForGivenNodeId = await apicallingmodule.callingNodeDetailsFetchingApiForSmartBinName(nodeId,serverIp);
+                  receivedCapacity = fetchedDetailForGivenNodeId.capacity;
+                  levelPercentage = receivedGarbageLevel/receivedCapacity;
+                  levelPercentage = levelPercentage*100;
+
+
+                  }
+                  catch(e)
+                  {
+                    console.log("error in fetching node details from node id");
+                  }
+                }
+                var fetchedjson = await apicallingmodule.callingsetSmartBinGarbageLevelApi(putBody,serverIp);
+
+                var WCM_WVM_SMART_BIN_ALERT_DATA = { "msgId": SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.msgId, "smartBinName": SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.smartBinName, "garbageLevel": levelPercentage };
+                var WCM_DRIVER_MOBILE_SMART_BIN_ALERT_DATA = { "msgId": SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.msgId, "smartBinName": SI_WCM_DA_SMART_BIN_ALERT_QUEUE_MESSAGE.smartBinName, "garbageLevel": levelPercentage };
                 // socket.on("connect", () => 
                 // {
 
