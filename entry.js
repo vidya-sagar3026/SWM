@@ -267,8 +267,7 @@ class entrySocket {
 
               }
 
-
-              if(msgId == 21)
+if(msgId == 21)
               {
                 console.log(SI_MESSAGE.msgId);
                 console.log(SI_MESSAGE.Imei);
@@ -289,48 +288,53 @@ class entrySocket {
                  fetchedjson = await apicallingmodule.callingVehicleInfoApiForGivenTrackerId(gps_tracker_id,serverIp);
                  console.log(fetchedjson.vehicleNo);
                  console.log(fetchedjson.wardId);
-                 VehcilenoVsReceivedSIdata[fetchedjson.vehicleNo] = SI_MESSAGE;
+                 var putbodyforpostfirstreceiveddata = {"vehicleNo":fetchedjson.vehicleNo, "Speed":SI_MESSAGE.Speed, "Lat":SI_MESSAGE.Lat, "Lng":SI_MESSAGE.Lng,"Odo":SI_MESSAGE.Odo,"Iggnition":SI_MESSAGE.Iggnition, "Ipower":SI_MESSAGE.Ipower,"dateTime":SI_MESSAGE.dateTime};
+                 if(VehcilenoVsReceivedSIdata[fetchedjson.vehicleNo]!=undefined)
+                 {
+                   var earlierData = VehcilenoVsReceivedSIdata[fetchedjson.vehicleNo].Odo;
+                   var currentData = SI_MESSAGE.Odo;
+                   if(currentData-earlierData>=diff)
+                   {
+
+                    try{
+                      var fetchedJsonForLocationPost = await apicallingmodule.callingapiAddGPSData(putbodyforpostfirstreceiveddata,serverIp);
+                      console.log(fetchedJsonForLocationPost);
+                      }
+                      catch(e)
+                      {
+                           console.log("error in AddGPSData api");
+                      }
+                   
+
+                   }
+                   VehcilenoVsReceivedSIdata[fetchedjson.vehicleNo] = SI_MESSAGE;
+                 }
+                 else
+                 {
+                  VehcilenoVsReceivedSIdata[fetchedjson.vehicleNo] = SI_MESSAGE;
+                  try{
+                    var fetchedJsonForLocationPost = await apicallingmodule.callingapiAddGPSData(putbodyforpostfirstreceiveddata,serverIp);
+                    console.log(fetchedJsonForLocationPost);
+                    }
+                    catch(e)
+                    {
+                         console.log("error in AddGPSData api for adding gps data for first time");
+                    }
+
+                 }
+                
+                 
                 }
 
                 catch(e)
                 {
                   console.log("error in calling api VehicleInfoApiForGivenTrackerId");
                   console.log(e);
-                  VehcilenoVsReceivedSIdata[fetchedjson.vehicleNo] = SI_MESSAGE;//vehicle to be hardcoded
-                }
-                var putbodyforpostfirstreceiveddata = {"vehicleNo":fetchedjson.vehicleNo, "Speed":SI_MESSAGE.Speed, "Lat":SI_MESSAGE.Lat, "Lng":SI_MESSAGE.Lng,"Odo":SI_MESSAGE.Odo,"Iggnition":SI_MESSAGE.Iggnition, "Ipower":SI_MESSAGE.Ipower,"dateTime":SI_MESSAGE.dateTime};
-               // var putbodyforUpdateVehiclePerformance = { "vehicleNo" :"XYZ","totalRunningKms":17,"idleHours":1,"standByHours":0,"dateTimeStamp":"" }
-  
-                if(false)//SI_MESSAGE.dateTime==""
-                {
-                  
-                  var fetchedJsonForLocationPost = await apicallingmodule.callingapiAddGPSData(putbodyforpostfirstreceiveddata,serverIp);
-                 // var fetchedJsonForUpdateVehiclePerformanceData = await apicalling.callingapiUpdateVehiclePerformanceData(putbodyforUpdateVehiclePerformance,fetchedjson.vehicleNo,serverIp);
-                  console.log(fetchedJsonForLocationPost);
-                  console.log(fetchedJsonForUpdateVehiclePerformanceData);
                   
                 }
-                if(true)//conditiom for when vehicle needs to be updated
-                {
-                  try{
-                  var fetchedJsonForLocationPost = await apicallingmodule.callingapiAddGPSData(putbodyforpostfirstreceiveddata,serverIp);
-                  console.log(fetchedJsonForLocationPost);
-                  }
-                  catch(e)
-                  {
-                       console.log("error in AddGPSData api");
-                  }
-                  try
-                  {
-                //  var fetchedJsonForUpdateVehiclePerformanceData = await apicalling.callingapiUpdateVehiclePerformanceData(putbodyforUpdateVehiclePerformance,fetchedjson.vehicleNo,serverIp);
-                  //console.log(fetchedJsonForUpdateVehiclePerformanceData);
-                  }
-                  catch(e)
-                  {
-                    console.log("error in UpdateVehiclePerformanceData api");
-                  }
-  
-                }
+                
+             
+              
                
 
               }
