@@ -464,12 +464,27 @@ class entrySocket {
 
 
 
+ 
         socket.on('WVM_WCM_GPS_DATA_REQ', function (data) {
 
           console.log(data.VehicleNo);
           console.log(data.loginUser);
           console.log(data.ReqStatus);
           var event = "WCM_WVM_GPS_DATA_RESP_" + data.loginUser;
+          if(data.ReqStatus!=0)
+          {
+          if(VehiclenovsUserMap[data.VehicleNo]!=undefined)
+          {
+            var userArray = VehiclenovsUserMap[data.VehicleNo];
+            userArray.push(userArray);
+            VehiclenovsUserMap[data.VehicleNo] = userArray;
+          }
+          else
+          {
+            var userArray = [];
+            userArray.push(data.loginUser);
+            VehiclenovsUserMap[data.VehicleNo] = userArray;
+          }
           if(VehcilenoVsReceivedSIdata[data.VehicleNo]!=undefined)
           {
             var receivedSIdataAgainstVechileNo = VehcilenoVsReceivedSIdata[data.VehicleNo]; 
@@ -481,6 +496,22 @@ class entrySocket {
               console.log("given vehicle numver has not been received");
               io.sockets.emit(event,"given vehicle does not exist");
           }
+        }
+        else
+        {
+          if(VehiclenovsUserMap[data.VehicleNo]!=undefined)
+          {
+            var userArray = VehiclenovsUserMap[data.VehicleNo];
+           for(let i=0;i<userArray.length;i++)
+           {
+             if(userArray[i]==data.loginUser)
+             {
+               delete userArray[i];
+             }
+           }
+           VehiclenovsUserMap[data.VehicleNo] = userArray;
+          }
+        }
           
 
 
