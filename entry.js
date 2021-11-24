@@ -265,9 +265,7 @@ class entrySocket {
 
 
 
-              }
-
-if(msgId == 21)
+              }if(msgId == 21)
               {
                 console.log(SI_MESSAGE.msgId);
                 console.log(SI_MESSAGE.Imei);
@@ -280,6 +278,7 @@ if(msgId == 21)
                 console.log(SI_MESSAGE.Ipower);
                 console.log(SI_MESSAGE.dateTime);
                 var gps_tracker_id = SI_MESSAGE.Imei;
+                var ipower = parseInt(SI_MESSAGE.Ipower);
                 var fetchedjson;
                
                 
@@ -288,7 +287,16 @@ if(msgId == 21)
                  fetchedjson = await apicallingmodule.callingVehicleInfoApiForGivenTrackerId(gps_tracker_id,serverIp);
                  console.log(fetchedjson.vehicleNo);
                  console.log(fetchedjson.wardId);
-                 var putbodyforpostfirstreceiveddata = {"vehicleNo":fetchedjson.vehicleNo, "Speed":SI_MESSAGE.Speed, "Lat":SI_MESSAGE.Lat, "Lng":SI_MESSAGE.Lng,"Odo":SI_MESSAGE.Odo,"Iggnition":SI_MESSAGE.Iggnition, "Ipower":SI_MESSAGE.Ipower,"dateTime":SI_MESSAGE.dateTime};
+                 var putbodyforpostfirstreceiveddata = {"vehicleNo":fetchedjson.vehicleNo, "Speed":SI_MESSAGE.Speed, "Lat":SI_MESSAGE.Lat, "Lng":SI_MESSAGE.Lng,"Odo":SI_MESSAGE.Odo,"Iggnition":SI_MESSAGE.Iggnition, "Ipower":ipower,"dateTime":SI_MESSAGE.dateTime};
+                 var userArray = VehiclenovsUserMap[fetchedjson.vehicleNo];
+                 for(let i=0;i<userArray.length;i++)
+                 {
+                    var event = "WCM_WVM_GPS_DATA_RESP_" + userArray[i];
+                    var WCM_WVM_GPS_DATA_RESP_MESSAGE = {"VehicleNo":fetchedjson.vehicleNo,"Speed":SI_MESSAGE.Speed,"Lat":SI_MESSAGE.Lat,"Lng":SI_MESSAGE.Lng,"Odo":SI_MESSAGE.Odo,"Iggnition":SI_MESSAGE.Iggnition};
+                    io.sockets.emit(event, WCM_WVM_GPS_DATA_RESP_MESSAGE );
+                  
+
+                 }
                  if(VehcilenoVsReceivedSIdata[fetchedjson.vehicleNo]!=undefined)
                  {
                    var earlierData = VehcilenoVsReceivedSIdata[fetchedjson.vehicleNo].Odo;
