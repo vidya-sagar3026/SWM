@@ -5,10 +5,10 @@ const port = 8081
 let something = 5;
 app.get('/:id', (req, res) => {
   var arr = ['123','456','789'];
-    res.send(arr);
+    res.send('THis is response from rest api'+req.params.id);
 
     
-  res.end('THis is response from rest api'+req.params.id);
+ // res.end('THis is response from rest api'+req.params.id);
 });
 
 
