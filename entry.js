@@ -31,7 +31,32 @@ class entrySocket {
 
         /**********************rabiit mq listener******************************** */
 
+                try{
+          var fetchedVehcileTrackingDetails = await apicallingmodule.getVehcileTrackRequest();
+          for(let i=0;i<fetchedVehcileTrackingDetails.length;i++)
+          {
+            var fetchedjson = fetchedVehcileTrackingDetails[i];
+            if(VehiclenovsUserMap[fetchedjson.vehicleNo]!=undefined)
+            {
+              var user = VehiclenovsUserMap[fetchedjson.vehicleNo];
+              user.push(fetchedjson.loginUser);
+              VehiclenovsUserMap[fetchedjson.vehicleNo]=user;
+            }
+            else
+            {
+               var user = [];
+               user.push(fetchedjson.loginUser);
+               VehiclenovsUserMap[fetchedjson.vehicleNo]=user;
 
+            }
+          }
+
+
+          }
+          catch(e)
+          {
+            console.log("error in fetching tracking history");
+          }
         amqp.connect('amqp://guest:guest@127.0.0.1', function (error0, connection) {
           if (error0) {
             throw error0;
@@ -265,7 +290,7 @@ class entrySocket {
 
 
 
-              }if(msgId == 21)
+              } if(msgId == 21)
               {
                 console.log(SI_MESSAGE.msgId);
                 console.log(SI_MESSAGE.Imei);
@@ -464,8 +489,7 @@ class entrySocket {
 
 
 
- 
-        socket.on('WVM_WCM_GPS_DATA_REQ', function (data) {
+         socket.on('WVM_WCM_GPS_DATA_REQ', function (data) {
 
           console.log(data.VehicleNo);
           console.log(data.loginUser);
@@ -476,7 +500,7 @@ class entrySocket {
           if(VehiclenovsUserMap[data.VehicleNo]!=undefined)
           {
             var userArray = VehiclenovsUserMap[data.VehicleNo];
-            userArray.push(userArray);
+            userArray.push(data.loginUser);
             VehiclenovsUserMap[data.VehicleNo] = userArray;
           }
           else
