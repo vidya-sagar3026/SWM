@@ -218,6 +218,26 @@ async function callingeditSmartBinApi(dataToBeUpdated)
 }
 
 
+
+async function getVehcileTrackRequest()
+{
+  var fetchedArray;
+  const axios = require('axios');
+  var query = 'http://'+ip+':8081/api/swm/si/updateVehcileTrackReq/?vehicleNo=0';
+  try{
+  await axios.get(query).then(resp => {
+    console.log(resp.data);
+    fetchedArray = resp.data;
+});
+  }
+  catch(e)
+  {
+    console.log("error in getVehcileTrackRequest api with error "+e);
+    
+  }
+}
+
+
 async function callingsetSmartBinGarbageLevelApi(dataToBeUpdated,ip)
 {
 var query = 'http://'+ip+':8081/api/swm/si/setSmartBinGarbageLevel/';
