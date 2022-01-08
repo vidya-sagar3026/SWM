@@ -24,33 +24,8 @@ var io = require('socket.io')(http, {
   }
 
 });
-async function dummycall()
-{const apicallingmodule = require('./apicalling')
-var as = require('./RabbitMq/ConnectionFactory')
-var mqsender = require('./RabbitMq/mqsender')
-var amqp = require('amqplib/callback_api');
 
-console.log('This is Entry Class')
-var app = require('express')();
-var cors = require('cors');
-var http = require('http').Server(app);
-const PropertiesReader = require('properties-reader');
-const prop = PropertiesReader('app.properties');
-getProperty = (pty) => { return prop.get(pty); }
-console.log(getProperty('server.port'))
-console.log(getProperty('server.ip'))
-console.log(getProperty('diff'))
-serverIp = getProperty('server.ip');
-var difference = getProperty('diff')
 
-app.use(cors());
-
-var io = require('socket.io')(http, {
-  cors: {
-    origin: "*"
-  }
-
-});
 async function dummycall()
 {
  // var dummyplayerId =  await apicallingmodule.callingPlayerIdAPiForUser("2010140026"); 
@@ -724,6 +699,18 @@ class entrySocket {
     }
 }
 module.exports = new entrySocket();
+
+
+
+// http.listen(process.argv[2], function() {
+//     console.log('listening on *:==> ' + http.address().port);
+// });
+
+
+
+
+
+
 
 
 
